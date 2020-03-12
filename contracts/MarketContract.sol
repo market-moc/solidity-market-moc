@@ -41,14 +41,22 @@ contract MarketContract {
     }
 
     function getHouse(uint _id) public view returns (House memory) {
-        require(house[_id].id == _id);
+        //require(house[_id].id == _id);
         return house[_id];
     }
 
-    function newTransaction(Seller memory _seller, Buyer memory _buyer, uint _idHouse) internal {
+    function setPerson(uint _id, string memory _name, string memory _addressPerson, bytes memory _action) public {
+        if(keccak256(_action) == keccak256('seller')) {
+            seller = Seller(_id, _name, _addressPerson);
+        } else {
+            buyer = Buyer(_id, _name, _addressPerson);
+        }
+    }
+
+    function newTransaction(uint _id, string memory _name, string memory _addressPerson, uint _idHouse) internal {
         // 1) recevoir et alimenter les infos du buyer et du seller
-        seller = _seller;
-        buyer = _buyer;
+        setPerson(_id, _name, _addressPerson, "buyer");
+        setPerson(_id, _name, _addressPerson, "seller");
         // 2) buyer acheter le produit
         delete house[_idHouse];
         // 3) vérifier si la somme qui met est égale à la somme qui l'envoie
