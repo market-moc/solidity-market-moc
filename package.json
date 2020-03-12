@@ -18,5 +18,6 @@
   "bugs": {
     "url": "https://github.com/market-moc/solidity-market-moc/issues"
   },
-  "homepage": "https://github.com/market-moc/solidity-market-moc#readme"
+  "homepage": "https://github.com/market-moc/solidity-market-moc#readme",
+  "devDependencies": {}
 }
