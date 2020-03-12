@@ -31,9 +31,13 @@ contract MarketContract {
     Buyer private buyer;
     House[] private house;
 
-    function addHouseToSeller(House memory _house) public returns (uint) {
-        uint id = house.push(_house);
-        return id;
+    function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price, 
+    string memory _addressHouse, uint _surface, string memory _description) public {
+        house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description));
+    }
+
+    function getNumberOfHouse() public view returns (uint) {
+        return house.length;
     }
 
     function getHouse(uint _id) public view returns (House memory) {

@@ -21,3 +21,12 @@ achat :
 mise en vente :
 
 1) seller qui pourra ajouter des produits
+
+### commande
+truffle compile =>  pour transformer ton code solidity en json
+truffle migrate --reset => pour migrate ton code et le rendre disponible
+truffle test test/market_process.js  => pour lancer le test
+
+install ganache pour local server
+
+
