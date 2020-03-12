@@ -1,0 +1,22 @@
+{
+  "name": "solidity-market-moc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/market-moc/solidity-market-moc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/market-moc/solidity-market-moc/issues"
+  },
+  "homepage": "https://github.com/market-moc/solidity-market-moc#readme"
+}
