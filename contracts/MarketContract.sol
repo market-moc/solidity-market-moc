@@ -30,10 +30,13 @@ contract MarketContract {
     Seller private seller;
     Buyer private buyer;
     House[] private house;
+    mapping (uint => uint) houseOwner;
+    event logData(uint, uint);
 
     function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price, 
     string memory _addressHouse, uint _surface, string memory _description) public {
-        house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description));
+        uint id = house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description));
+        houseOwner[id] = id;
     }
 
     function getNumberOfHouse() public view returns (uint) {
@@ -53,14 +56,20 @@ contract MarketContract {
         }
     }
 
-    function newTransaction(uint _id, string memory _name, string memory _addressPerson, uint _idHouse) internal {
-        // 1) recevoir et alimenter les infos du buyer et du seller
-        setPerson(_id, _name, _addressPerson, "buyer");
-        setPerson(_id, _name, _addressPerson, "seller");
+    function newTransaction(uint _idHouse, uint monneyBuyer) external {
+        // 1) vérifier si la somme qui met est égale à la somme qui l'envoie
+        emit logData(house[_idHouse].price, monneyBuyer);
+        require(house[_idHouse].price == monneyBuyer);
         // 2) buyer acheter le produit
-        delete house[_idHouse];
-        // 3) vérifier si la somme qui met est égale à la somme qui l'envoie
-        // 4) l'argent du buyer est envoyé au seller et on retire le produit de la liste
+        removeHouse(_idHouse);
+        // 3) l'argent du buyer est envoyé au seller
+    }
+
+    function removeHouse(uint _id) internal {
+        uint index = houseOwner[_id];
+        //if(!index) return;
+        house[index] = house[house.length-1];
+        house.length--;
     }
     
 }
