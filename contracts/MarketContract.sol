@@ -58,11 +58,9 @@ contract MarketContract {
 
     function newTransaction(uint _idHouse, uint monneyBuyer) external {
         // 1) vérifier si la somme qui met est égale à la somme qui l'envoie
-        emit logData(house[_idHouse].price, monneyBuyer);
         require(house[_idHouse].price == monneyBuyer);
-        // 2) buyer acheter le produit
+        // 2) envoyer l'argent au buyer et supprimer la maison vendu
         removeHouse(_idHouse);
-        // 3) l'argent du buyer est envoyé au seller
     }
 
     function removeHouse(uint _id) internal {
