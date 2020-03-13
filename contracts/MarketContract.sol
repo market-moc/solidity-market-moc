@@ -26,14 +26,14 @@ contract MarketContract {
         string name;
         string addressPerson;
     }
-    
+
     Seller private seller;
     Buyer private buyer;
     House[] private house;
     mapping (uint => uint) houseOwner;
     event logData(uint, uint);
 
-    function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price, 
+    function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price,
     string memory _addressHouse, uint _surface, string memory _description) public {
         uint id = house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description));
         houseOwner[id] = id;
@@ -56,11 +56,10 @@ contract MarketContract {
         }
     }
 
-    function newTransaction(uint _idHouse, uint monneyBuyer) external {
-        // 1) vérifier si la somme qui met est égale à la somme qui l'envoie
-        require(house[_idHouse].price == monneyBuyer);
-        // 2) envoyer l'argent au buyer et supprimer la maison vendu
-        removeHouse(_idHouse);
+    function newTransaction() public payable returns(string memory) {
+       // require(msg.value == house[_idHouse].price);
+       // removeHouse(_idHouse);
+        return "Done transaction";
     }
 
     function removeHouse(uint _id) internal {
@@ -69,5 +68,5 @@ contract MarketContract {
         house[index] = house[house.length-1];
         house.length--;
     }
-    
+
 }
