@@ -3,22 +3,25 @@ const marketProcess = artifacts.require("MarketContract");
 contract("MarketContract", accounts => {
     it('test add house', async () => {
         let meta = await marketProcess.deployed();
-        await meta.addHouseToSeller(1, 1, "White house", 400, "rue des fleurs", 50, "blablabla");
-        await meta.addHouseToSeller(1, 1, "White house", 400, "rue des fleurs", 50, "blablabla");
-        let id = await meta.getNumberOfHouse.call();
-        console.log(id);
-        // let house = await meta.getHouse.call(id - 1);
-        // assert.equal(house.id, id);
+        await meta.addHouseToSeller("appartement", 400, "rue des fleurs", 50, "blablabla");
+        await meta.addHouseToSeller("appartement", 300, "rue des rouges", 50, "blablabla1111");
+        let numberOfMusic = await meta.getNumberOfHouse.call();
+        assert.equal(numberOfMusic, 2);
     })
-
-    // it('new transaction', async () => {
-    //     let meta = await marketProcess.deployed();
-    //     await meta.addHouseToSeller(2, 1, "Black house", 300, "rue des leurres", 50, "blablabla2");
-    //     await meta.newTransaction(1, 300);
-    //     let numberOfHouse = await meta.getNumberOfHouse.call();
-    //     let house = await meta.getHouse.call(0);
-    //     console.log(house);
-    //     assert.equal(numberOfHouse, 1);
-    // })
+    it('test houses', async () => {
+        let meta = await marketProcess.deployed();
+        await meta.addHouseToSeller("appartement", 400, "rue des fleurs", 50, "blablabla");
+        await meta.addHouseToSeller("appartement", 300, "rue des rouges", 20, "blablabla1111");
+        let houses = await meta.getHouses.call();
+        assert.notEqual(houses, []);
+    })
+    it('new transaction', async () => {
+        let meta = await marketProcess.deployed();
+        let houses = await meta.getHouses.call();
+        let index = houses[0].indexOf('appartement');
+        await meta.newTransaction(index, {from: '0xB1544bD4520b2aDeB3b919DCA6af0A77e7197D7A', value: 2});
+        let transaction = meta.getTransaction.call();
+        assert.notEqual(transaction, {});
+    })
 });
 
