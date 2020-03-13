@@ -14,8 +14,8 @@ contract MarketContract {
     }
 
     struct Transaction {
-        uint buyerId;
-        uint sellerId;
+        address buyerId;
+        address sellerId;
         House house;
         uint date;
     }
@@ -33,13 +33,13 @@ contract MarketContract {
     }
 
     Seller private seller;
-    Transaction private transaction;
+    Transaction[] private transaction;
     Buyer private buyer;
     House[] private house;
     mapping (uint => address) houseOwner;
     mapping (uint => address) from;
     mapping (uint => address) to;
-    event logData(House[]);
+    event logData(address);
 
     function addHouseToSeller(string memory _tp, uint _price,
     string memory _addressHouse, uint _surface, string memory _description) public {
@@ -59,12 +59,12 @@ contract MarketContract {
         return house;
     }
 
-    function getTransaction() external view returns (Transaction memory) {
+    function getTransaction() external view returns (Transaction[] memory) {
         return transaction;
     }
 
     function setTransaction(uint _idHouse) internal {
-        transaction = Transaction(buyer.id, seller.id, house[_idHouse], now);
+        transaction.push(Transaction(msg.sender, houseOwner[_idHouse], house[_idHouse], now));
     }
 
     function setPerson(uint _id, string memory _name, string memory _addressPerson, bytes memory _action) public {
@@ -72,20 +72,14 @@ contract MarketContract {
             seller = Seller(_id, _name, _addressPerson);
         } else {
             buyer = Buyer(_id, _name, _addressPerson);
-            from[seller.id] = msg.sender;
+            from[buyer.id] = msg.sender;
         }
     }
 
-    function getAdressBuyer() internal view returns (address) {
-        //require(bytes(buyer.name).length > 0);
-        Buyer memory _buyer = buyer;
-        return from[_buyer.id];
-    }
-
     function newTransaction(uint _idHouse) public payable returns(Transaction memory) {
-       //require(msg.value == house[_idHouse].price);
-       address payable _buyerAdress = address(uint(getAdressBuyer()));
-       _buyerAdress.transfer(msg.value);
+       address payable _idSeller = address(uint(houseOwner[_idHouse]));
+       address payable idBuyer = address(uint(msg.sender));
+       idBuyer.transfer(msg.value);
        setTransaction(_idHouse);
        removeHouse(_idHouse);
     }
@@ -94,6 +88,5 @@ contract MarketContract {
         require(houseOwner[_id] == msg.sender);
         house[_id] = house[house.length-1];
         house.length--;
-        emit logData(house);
     }
 }
