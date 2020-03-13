@@ -39,7 +39,7 @@ contract MarketContract {
     mapping (uint => address) houseOwner;
     mapping (uint => address) from;
     mapping (uint => address) to;
-    event logData(Transaction);
+    event logData(House[]);
 
     function addHouseToSeller(string memory _tp, uint _price,
     string memory _addressHouse, uint _surface, string memory _description) public {
@@ -87,12 +87,13 @@ contract MarketContract {
        address payable _buyerAdress = address(uint(getAdressBuyer()));
        _buyerAdress.transfer(msg.value);
        setTransaction(_idHouse);
-       emit logData(transaction);
        removeHouse(_idHouse);
     }
 
     function removeHouse(uint _id) internal {
         require(houseOwner[_id] == msg.sender);
-        delete house[_id];
+        house[_id] = house[house.length-1];
+        house.length--;
+        emit logData(house);
     }
 }
