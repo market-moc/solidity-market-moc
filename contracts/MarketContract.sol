@@ -30,13 +30,14 @@ contract MarketContract {
     Seller private seller;
     Buyer private buyer;
     House[] private house;
-    mapping (uint => uint) houseOwner;
-    event logData(uint, uint);
+    mapping (uint => address) houseOwner;
+    event logData(uint);
 
     function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price,
     string memory _addressHouse, uint _surface, string memory _description) public {
-        uint id = house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description));
-        houseOwner[id] = id;
+        uint id = house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description)) - 1;
+        emit logData(id);
+        houseOwner[id] = msg.sender;
     }
 
     function getNumberOfHouse() public view returns (uint) {
@@ -44,7 +45,6 @@ contract MarketContract {
     }
 
     function getHouse(uint _id) public view returns (House memory) {
-        //require(house[_id].id == _id);
         return house[_id];
     }
 
@@ -63,10 +63,7 @@ contract MarketContract {
     }
 
     function removeHouse(uint _id) internal {
-        uint index = houseOwner[_id];
-        //if(!index) return;
-        house[index] = house[house.length-1];
-        house.length--;
+        require(houseOwner[_id] == msg.sender);
+        delete house[_id];
     }
-
 }
