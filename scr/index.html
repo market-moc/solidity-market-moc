@@ -12,13 +12,11 @@
 
             var contract;
             const contractAddress = "0xCdd48A300E4Fdd40FBae278BC759b39Bd25A5747";
+            const from = web3.currentProvider.selectedAddress;
 
             const contractMessage = async () => {
                 contract = new web3.eth.Contract(abi, contractAddress);
-                await contract.methods.newTransaction().send({
-                    from: "0xEe6611275088Fe23599952b4B3423e6d4199559B",
-                    value: 100000000
-                })
+                await contract.methods.newTransaction().send({from, value: 100000000})
                     .then(res =>
                         console.log('Success', res))
                     .catch(err => console.log(err));
