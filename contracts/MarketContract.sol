@@ -6,13 +6,18 @@ pragma experimental ABIEncoderV2;
 
 contract MarketContract {
     struct House {
-        uint id;
-        uint id_seller;
-        string name;
+        string tp;
         uint price;
         string addressHouse;
         uint surface;
         string description;
+    }
+
+    struct Transaction {
+        uint buyerId;
+        uint sellerId;
+        House[] house;
+        string date;
     }
 
     struct Seller {
@@ -28,14 +33,17 @@ contract MarketContract {
     }
 
     Seller private seller;
+    Transaction private transaction;
     Buyer private buyer;
     House[] private house;
     mapping (uint => address) houseOwner;
+    mapping (uint => address) from;
+    mapping (uint => address) to;
     event logData(uint);
 
-    function addHouseToSeller(uint _id, uint _id_seller, string memory _name, uint _price,
+    function addHouseToSeller(string memory _tp, uint _price,
     string memory _addressHouse, uint _surface, string memory _description) public {
-        uint id = house.push(House(_id, _id_seller, _name, _price, _addressHouse, _surface, _description)) - 1;
+        uint id = house.push(House(_tp, _price, _addressHouse, _surface, _description)) - 1;
         emit logData(id);
         houseOwner[id] = msg.sender;
     }
@@ -48,18 +56,36 @@ contract MarketContract {
         return house[_id];
     }
 
+    function getHouses() external view returns (House[] memory) {
+        return house;
+    }
+
+    function getTransaction(uint _idHouse) external view returns (Transaction memory) {
+        transaction = Transaction(buyer.id, seller.id, houseOwner[_idHouse], now);
+        return transaction;
+    }
+
     function setPerson(uint _id, string memory _name, string memory _addressPerson, bytes memory _action) public {
         if(keccak256(_action) == keccak256('seller')) {
             seller = Seller(_id, _name, _addressPerson);
         } else {
             buyer = Buyer(_id, _name, _addressPerson);
+            from[seller.id] = msg.sender;
         }
     }
 
-    function newTransaction() public payable returns(string memory) {
-       // require(msg.value == house[_idHouse].price);
-       // removeHouse(_idHouse);
-        return "Done transaction";
+    function getAdressBuyer() internal view returns (address) {
+        require(bytes(buyer.name).length > 0);
+        Buyer memory _buyer = buyer;
+        return from[setPerson.id];
+    }
+
+    function newTransaction(uint _idHouse) public payable returns(string memory) {
+       require(msg.value == house[_idHouse].price);
+       address payable _buyerAdress = address(uint(getAdressBuyer()));
+       _buyerAdress.transfer(msg.value);
+       removeHouse(_idHouse);
+       return "Done transaction";
     }
 
     function removeHouse(uint _id) internal {

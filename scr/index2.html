@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello World</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
+    <script>
+        window.addEventListener('load', async () => {
+            var contract;
+            var abi =[
+                {
+                    "anonymous": false,
+                    "inputs": [
+                        {
+                            "indexed": false,
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "logData",
+                    "type": "event"
+                },
+                {
+                    "constant": false,
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "_id",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "_id_seller",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_name",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "_price",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_addressHouse",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "_surface",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_description",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "addHouseToSeller",
+                    "outputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "constant": true,
+                    "inputs": [],
+                    "name": "getNumberOfHouse",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "payable": false,
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "constant": true,
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "_id",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "getHouse",
+                    "outputs": [
+                        {
+                            "components": [
+                                {
+                                    "internalType": "uint256",
+                                    "name": "id",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "uint256",
+                                    "name": "id_seller",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint256",
+                                    "name": "price",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "addressHouse",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint256",
+                                    "name": "surface",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "description",
+                                    "type": "string"
+                                }
+                            ],
+                            "internalType": "struct MarketContract.House",
+                            "name": "",
+                            "type": "tuple"
+                        }
+                    ],
+                    "payable": false,
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "constant": false,
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "_id",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_name",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_addressPerson",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "bytes",
+                            "name": "_action",
+                            "type": "bytes"
+                        }
+                    ],
+                    "name": "setPerson",
+                    "outputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "constant": false,
+                    "inputs": [],
+                    "name": "newTransaction",
+                    "outputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "payable": true,
+                    "stateMutability": "payable",
+                    "type": "function"
+                }
+            ];
+
+            const contractAddress = "0xA317F765BA702C6675Cd08c8052f50db7A1f5EeA";
+            const from = web3.currentProvider.selectedAddress;
+
+            const contractMessage = async () => {
+                contract = new web3.eth.Contract(abi, contractAddress);
+                await contract.methods.setPerson(1, "Toto", "rue des sanglier", "seller");
+                await contract.methods.setPerson(1, "Bibi", "rue des mésanges", "buyer");
+                
+                await contract.methods.addHouseToSeller(2, 3, "White house", 400, "rue des fleurs", 50, "blablabla");
+
+                const test =  await contract.methods.getHouse(0).call();
+                console.log(test)
+                await contract.methods.newTransaction(test).send({from});
+            };
+
+
+            // Modern dapp browsers...
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    // Request account access if needed
+                    await ethereum.enable();
+                    var message = await contractMessage();
+                    var elm = document.getElementById("message");
+                    elm.innerHTML = message;
+                } catch (error) {
+                    // User denied account access...
+                }
+            }
+            // Non-dapp browsers...
+            else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+        });
+    </script>
+</head>
+<body>
+<div id="message"></div>
+</body>
+</html>
